@@ -2,76 +2,75 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#define TIME _TIME_  
+#define TIME _TIME_
 #define DATE _DATE_
 using namespace std;
 
-class member 
+class member
 {
-    private:
-        string name, contactno, membershiptype, membershipstartdate, membershipduration, activitystatus, memberid;
+private:
+    string name, contactno, membershiptype, membershipstartdate, membershipduration, activitystatus, memberid;
 
-    public:    
-        member(string name, string contactno, string membershipstartdate, string membershiptype, string membershipduration, string activitystatus, string memberid): 
-            name(name), contactno(contactno), membershipstartdate(membershipstartdate), membershiptype(membershiptype), membershipduration(membershipduration),activitystatus(activitystatus), memberid(memberid) {}
+public:
+    member(string name, string contactno, string membershipstartdate, string membershiptype, string membershipduration, string activitystatus, string memberid) : name(name), contactno(contactno), membershipstartdate(membershipstartdate), membershiptype(membershiptype), membershipduration(membershipduration), activitystatus(activitystatus), memberid(memberid) {}
 
-        void setName(string namep)
-        {
-            name = namep;
-        }
-        void setContactNo(string contactnop)
-        {
-            contactno = contactnop;
-        }
-        void setMembershipStartDate(string membershipstartdatep)
-        {
-            membershipstartdate = membershipstartdatep;
-        }
-        void setMembershipType(string membershiptypep)
-        {
-            membershiptype = membershiptypep;
-        }
-        void setMembershipDuration(string membershipdurationp)
-        {
-            membershipduration = membershipdurationp;
-        }   
-        void setActivityStatus(string activitystatusp)
-        {
-            activitystatus = activitystatusp;
-        }
-        void setMemberId(string memberidp)
-        {
-            memberid = memberidp;
-        }
+    void setName(string namep)
+    {
+        name = namep;
+    }
+    void setContactNo(string contactnop)
+    {
+        contactno = contactnop;
+    }
+    void setMembershipStartDate(string membershipstartdatep)
+    {
+        membershipstartdate = membershipstartdatep;
+    }
+    void setMembershipType(string membershiptypep)
+    {
+        membershiptype = membershiptypep;
+    }
+    void setMembershipDuration(string membershipdurationp)
+    {
+        membershipduration = membershipdurationp;
+    }
+    void setActivityStatus(string activitystatusp)
+    {
+        activitystatus = activitystatusp;
+    }
+    void setMemberId(string memberidp)
+    {
+        memberid = memberidp;
+    }
 
-        string getName()
-        {
-            return name;
-        }
-        string getContactNo()
-        {
-            return contactno;
-        }
-        string getMembershipStartDate()
-        {
-            return membershipstartdate;
-        }
-        string getMembershipType()
-        {
-            return membershiptype;
-        }
-        string getMembershipDuration()
-        {
-            return membershipduration;
-        }
-        string getActivityStatus()
-        {
-            return activitystatus;
-        }
-        string getMemberId()
-        {
-            return memberid;
-        }
+    string getName()
+    {
+        return name;
+    }
+    string getContactNo()
+    {
+        return contactno;
+    }
+    string getMembershipStartDate()
+    {
+        return membershipstartdate;
+    }
+    string getMembershipType()
+    {
+        return membershiptype;
+    }
+    string getMembershipDuration()
+    {
+        return membershipduration;
+    }
+    string getActivityStatus()
+    {
+        return activitystatus;
+    }
+    string getMemberId()
+    {
+        return memberid;
+    }
 };
 
 ofstream file("members.txt", ios::app);
@@ -143,7 +142,6 @@ void memberCheckIn(string memberid)
     file2.close();
 }
 
-
 // To be modified:
 void memberCheckOut(string memberid)
 {
@@ -157,7 +155,7 @@ void memberCheckOut(string memberid)
 string generateMemberId()
 {
     string memberid;
-    
+
     if (!members.empty())
     {
         int index = members.size() - 1;
@@ -174,11 +172,13 @@ string generateMemberId()
 void searchMember(string memberid)
 {
     string name, contactno, membershipstartdate, membershipduration, membershiptype, activitystatus;
-    
+
     bool recordfound = false;
     int lastindex = members.size() - 1;
     int index = 0;
-    do {
+
+    do
+    {
         if (members[index].getMemberId() == memberid)
         {
             name = members[index].getName();
@@ -189,15 +189,15 @@ void searchMember(string memberid)
             activitystatus = members[index].getActivityStatus();
             recordfound = true;
         }
-        
+
         if ((index == lastindex) && (!recordfound))
         {
-            cout << "Record Not Found!" << endl;
-            cout << "Exiting Program......";
+            cout << "Error: Invalid Member ID." << endl;
+            cout << "Redirecting back to Manager Terminal" << endl;
+            managerTerminal();
         }
         ++index;
     } while (!recordfound && (index <= lastindex));
-    
 
     cout << "Name: " << name << endl;
     cout << "Contact Number: " << contactno << endl;
@@ -216,22 +216,24 @@ void newRegistration()
     cout << "Enter your contact number: ";
     cin >> contactno;
     membershipstartdate = __DATE__;
-    
+
     cout << "The list of membership types and their corresponding monthly fee is mentioned below: " << endl;
     cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
     cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
     cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
-    cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
+    cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl
+         << endl;
 
-    int userinput1, userinput2; 
-    
-    do {
-    if ((userinput2 != 1) && (userinput2 != 2) && (userinput2 != 3) && (userinput2 != 4))
+    int userinput1, userinput2;
+
+    do
     {
-        cout << "Enter number ranging from 1-4 only";
-    }  
-    cout << "Enter the number of membership you want (For Silver, press 1; For Silver+, press 2; For Gold; press 3; For Platinum, press 4)" << endl;
-    cin >> userinput2;
+        if ((userinput2 != 1) && (userinput2 != 2) && (userinput2 != 3) && (userinput2 != 4))
+        {
+            cout << "Enter number ranging from 1-4 only";
+        }
+        cout << "Enter the number of membership you want (For Silver, press 1; For Silver+, press 2; For Gold; press 3; For Platinum, press 4)" << endl;
+        cin >> userinput2;
     } while ((userinput2 != 1) && (userinput2 != 2) && (userinput2 != 3) && (userinput2 != 4));
 
     if (userinput2 == 1)
@@ -250,15 +252,16 @@ void newRegistration()
     {
         membershiptype = "Platinum";
     }
-    
+
     cout << "Membership Duration: " << endl;
-    do {
-    if ((userinput1 != 1) && (userinput1 != 2))
+    do
     {
-        cout << "Enter 1 or 2 only!" << endl;
-    }  
-    cout << "Enter 1 if you want monthly membership or enter 2 if you want yearly membership: " << endl;
-    cin >> userinput1;
+        if ((userinput1 != 1) && (userinput1 != 2))
+        {
+            cout << "Enter 1 or 2 only!" << endl;
+        }
+        cout << "Enter 1 if you want monthly membership or enter 2 if you want yearly membership: " << endl;
+        cin >> userinput1;
     } while ((userinput1 != 1) && (userinput1 != 2));
 
     if (userinput1 == 1)
@@ -281,13 +284,14 @@ void memberTerminal()
 {
     int userinput, userinput2;
     string memberid;
-    do {
+    do
+    {
         cout << "Enter 1 if you are an existing member or enter 2 if you are a new member: ";
         cin >> userinput;
         if ((userinput != 1) && (userinput != 2))
         {
             cout << "Enter 1 or 2 only!" << endl;
-        } 
+        }
     } while ((userinput != 1) && (userinput != 2));
 
     if (userinput == 2)
@@ -296,18 +300,19 @@ void memberTerminal()
     }
     else
     {
-        do {
+        do
+        {
             cout << "Press 1 to check in or press 2 to check out: ";
             cin >> userinput2;
             if ((userinput2 != 1) && (userinput2 != 2))
             {
                 cout << "Enter 1 or 2 only!" << endl;
-            } 
+            }
         } while ((userinput2 != 1) && (userinput2 != 2));
 
         cout << "Enter your Member ID: ";
         cin >> memberid;
-        
+
         if (userinput2 == 1)
         {
             memberCheckIn(memberid);
@@ -322,8 +327,9 @@ void memberTerminal()
 void updateMemberInformation(string memberid)
 {
     int actioninput2;
-    
-    do {
+
+    do
+    {
         cout << "Press 1 to edit Membership type of User; Press 2 to edit Membership duration of user; Press 3 to edit activity status of user; Press 4 to edit contact details of user";
         cin >> actioninput2;
         if ((actioninput2 != 1) && (actioninput2 != 2) && (actioninput2 != 3) && (actioninput2 != 4))
@@ -333,7 +339,7 @@ void updateMemberInformation(string memberid)
     } while ((actioninput2 != 1) && (actioninput2 != 2) && (actioninput2 != 3) && (actioninput2 != 4));
 
     string name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus;
-    
+
     int lastindex = members.size() - 1;
     int updateindex;
     int index = 0;
@@ -348,135 +354,178 @@ void updateMemberInformation(string memberid)
         ++index;
     }
 
-        if (recordfound)
+    if (recordfound)
+    {
+        if (actioninput2 == 1)
         {
-            if (actioninput2 == 1)
+            cout << "The list of membership types and their corresponding monthly fee is mentioned below: " << endl;
+            cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
+            cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
+            cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
+            cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
+
+            int userinput;
+            do
             {
-                cout << "The list of membership types and their corresponding monthly fee is mentioned below: " << endl;
-                cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
-                cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
-                cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
-                cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
-    
-                int userinput; 
-                do {
                 if ((userinput != 1) && (userinput != 2) && (userinput != 3) && (userinput != 4))
                 {
                     cout << "Enter number ranging from 1-4 only";
-                }  
+                }
                 cout << "Enter the number of membership you want (For Silver, press 1; For Silver+, press 2; For Gold; press 3; For Platinum, press 4)" << endl;
                 cin >> userinput;
-                } while ((userinput != 1) && (userinput != 2) && (userinput != 3) && (userinput != 4));
-                membershiptype = userinput;
-            }
-            else if (actioninput2 == 2)
-            {
-                cout << "The list of membership types and their corresponding monthly fee is mentioned below: " << endl;
-                cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
-                cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
-                cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
-                cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
+            } while ((userinput != 1) && (userinput != 2) && (userinput != 3) && (userinput != 4));
 
-                int userinput; 
-                do {
+            if (userinput == 1) {
+                membershiptype = "Silver";
+            }
+            else if (userinput == 2) {
+                membershiptype = "Silver+";
+            }
+            else if (userinput == 3) {
+                membershiptype = "Gold";
+            }
+            else {
+                membershiptype = "Platinum";
+            }
+
+            members[updateindex].setMembershipType(membershiptype);
+
+        }
+        else if (actioninput2 == 2)
+        {
+            cout << "The list of membership types and their corresponding monthly fee is mentioned below: " << endl;
+            cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
+            cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
+            cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
+            cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
+
+            int userinput;
+            do
+            {
                 if ((userinput != 1) && (userinput != 2))
                 {
                     cout << "Enter 1 or 2 only!" << endl;
-                }  
+                }
                 cout << "Enter 1 if you want monthly membership or enter 2 if you want yearly membership: " << endl;
                 cin >> userinput;
-                } while ((userinput != 1) && (userinput != 2));  
-                membershipduration = userinput;
+            } while ((userinput != 1) && (userinput != 2));
+            
+            if (userinput == 1) {
+                membershipduration = "Monthly";
             }
-            else if (actioninput2 == 3)
+            else {
+                membershipduration = "Yearly";
+            }
+
+            members[updateindex].setMembershipDuration(membershipduration);
+        }
+        else if (actioninput2 == 3)
+        {
+            int userinput;
+            do
             {
-                int userinput;
-                do {
                 if ((userinput != 1) && (userinput != 0))
                 {
                     cout << "Enter 1 or 0 only!" << endl;
-                }  
+                }
                 cout << "Enter 1 to set activity status of user as active or 0 to set activity status of user as inactive" << endl;
                 cin >> userinput;
-                } while ((userinput != 1) && (userinput != 0));
-                activitystatus = userinput;
+            } while ((userinput != 1) && (userinput != 0));
+            
+            if (userinput == 0) {
+                activitystatus = "Inactive";
             }
-            else
-            {
-                string newnumber;
-                cout << "Enter new contact number of user: ";
-                cin >> newnumber;
-                contactno = newnumber;
+            else {
+                activitystatus = "Active";
             }
+
+            members[updateindex].setActivityStatus(activitystatus);
         }
         else
         {
-            cout << "Member ID not found!";
+            string newnumber;
+            cout << "Enter new contact number of user: ";
+            cin >> newnumber;
+            contactno = newnumber;
+
+            members[updateindex].setContactNo(contactno);
         }
+    }
+    else
+    {
+        cout << "Record not found!";
+        managerTerminal();
+    }
+}
+
+bool passwordCheck()
+{
+    int attempts = 1;
+    string password;
+    string correctpassword = "FitnessGym123";
+    bool access = false;
+
+    cout << "Enter password to access Manager terminal. You only have four tries to enter correct password." << endl;
+
+    do
+    {
+        cout << "Password: ";
+        cin >> password;
+        if (password == correctpassword)
+        {
+            access = true;
+            cout << "Access Granted!" << endl;
+        }
+        else
+        {
+            cout << "Wrong password. Please Try again!" << endl;
+        }
+    } while (attempts <= 4 && !access);
+
+    if (!access)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 void managerTerminal()
 {
     int actioninput;
-    int attempts = 1;
-    string password;
-    string correctpassword = "FitnessGym123";
-    bool access = false;
-    
-    cout << "Enter password to access Manager terminal. You only have four tries to enter correct password." << endl;
-    
-    do {
-    cout << "Password: ";
-    cin >> password;
-    if (password == correctpassword)
-    {
-        access = true;
-        cout << "Access Granted!" << endl;
-    }
-    else
-    {
-        cout << "Wrong password. Please Try again!" << endl;
-    }
-    } while (attempts <= 4 && !access);
+    cout << "Select any action you want from the list below: " << endl;
+    cout << "   1, Update Member Information" << endl;
+    cout << "   2, Search Member Details" << endl;
+    cout << "   3, Report Generation" << endl;
 
-    if (!access)
+    do
     {
-        cout << "Access Denied. " << endl << "Restarting the system........";
-        main();
-    }
-    else
-    {
-        cout << "Select any action you want from the list below: " << endl;
-        cout << "   1, Update Member Information" << endl;
-        cout << "   2, Search Member Details" << endl;
-        cout << "   3, Report Generation" << endl;
-
-        do {
-            cout << "Enter 1 to Update Member Information; Enter 2 to Search for Member Details; Enter 3 to Generate Report: "; // Report Generation to be done later
-            cin >> actioninput;
-            if ((actioninput != 1) && (actioninput != 2) && (actioninput != 3))
-            {
-                cout << "Enter 1 or 2 or 3 only" << endl;
-            }
-        } while ((actioninput != 1) && (actioninput != 2) && (actioninput != 3));
-
-        if (actioninput == 2)
+        cout << "Enter 1 to Update Member Information; Enter 2 to Search for Member Details; Enter 3 to Generate Report: "; // Report Generation to be done later
+        cin >> actioninput;
+        if ((actioninput != 1) && (actioninput != 2) && (actioninput != 3))
         {
-            string memberid;
-
-            cout << "Enter the ID of member you want to search the information from: ";
-            cin >> memberid;
-
-            searchMember(memberid);
+            cout << "Enter 1 or 2 or 3 only" << endl;
         }
-        else if (actioninput == 1)
-        {
-            string memberid;
+    } while ((actioninput != 1) && (actioninput != 2) && (actioninput != 3));
 
-            cout << "Enter the member ID of member you want to edit the information for: ";
-            cin >> memberid;
-            updateMemberInformation(memberid);
-        }
+    if (actioninput == 2)
+    {
+        string memberid;
+
+        cout << "Enter the ID of member you want to search the information from: ";
+        cin >> memberid;
+
+        searchMember(memberid);
+    }
+    else if (actioninput == 1)
+    {
+        string memberid;
+
+        cout << "Enter the member ID of member you want to edit the information for: ";
+        cin >> memberid;
+        updateMemberInformation(memberid);
     }
 }
 
@@ -485,13 +534,14 @@ int main()
     readMainFile();
     int userinput, userinput2;
     cout << "Welcome to Gym Management System!" << endl;
-    do {
+    do
+    {
         cout << "Enter 1 if you are a Member or enter 2 if you are a Manager: ";
         cin >> userinput;
         if ((userinput != 1) && (userinput != 2))
         {
             cout << "Enter 1 or 2 only!" << endl;
-        } 
+        }
     } while ((userinput != 1) && (userinput != 2));
 
     if (userinput == 1)
@@ -500,7 +550,16 @@ int main()
     }
     else
     {
-        managerTerminal();
+        if (passwordCheck())
+        {
+            managerTerminal();
+        }
+        else
+        {
+            cout << "Access Denied!" << endl
+                 << "Restarting System......";
+            main();
+        }
     }
 
     writeMainFile();
