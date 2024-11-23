@@ -115,21 +115,20 @@ public:
     }
 };
 
-
-
 ofstream file("members.txt", ios::app);
 
 ofstream file2("attendance.txt", ios::app);
 
 vector<member> members;
 
+// checked
 void readMainFile()
 {
     ifstream file("members.txt");
     if (file.is_open())
     {
-        string fileline, name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid;
-        while (getline(file, name))
+        string name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid;
+        while (getline(file, name)) //this 
         {
             getline(file, contactno);
             getline(file, membershipstartdate);
@@ -152,7 +151,7 @@ void readMainFile()
 
 void writeMainFile()
 {
-    ofstream file("members.txt");
+    ofstream file("members.txt", ios::app);
     if (file.is_open())
     {
         string fileline, name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid;
@@ -222,7 +221,7 @@ void readAttendanceFile()
 
 void writeAttendanceFile()
 {
-    ofstream file2("attendance.txt");
+    ofstream file2("attendance.txt", ios::app);
     
     if (file2.is_open())
     {
@@ -262,45 +261,52 @@ void writeAttendanceFile()
     }
 }
 
-void memberCheckIn(string memberid) {
+void memberCheckIn(string memberid)
+{
     string time, date;
     time = __TIME__;
     date = __DATE__;
 
-    bool found = false;
-    for (int i = 0; i < members.size(); ++i) {
-        if (members[i].getMemberId() == memberid) {
-            members[i].setCheckType("Check-In");
-            members[i].setAttendanceDate(date);
-            members[i].setAttendanceTime(time);
-            found = true;
-            break; 
+    bool recordfound = false;
+    int index = 0;
+    int updateindex;
+    do
+    {
+        if (members[index].getMemberId() == memberid)
+        {
+            recordfound = true;
+            updateindex = index;
         }
-    }
+        ++index;
+    } while (!recordfound);
 
-    if (!found) {
-        cout << "Member ID not found." << endl;
-    }
+    members[updateindex].setCheckType("Check-In");
+    members[updateindex].setAttendanceDate(date);
+    members[updateindex].setAttendanceTime(time);
 }
-void memberCheckOut(string memberid) {
+
+void memberCheckOut(string memberid)
+{
     string time, date;
     time = __TIME__;
     date = __DATE__;
 
-    bool found = false;
-    for (int i = 0; i < members.size(); ++i) {
-        if (members[i].getMemberId() == memberid) {
-            members[i].setCheckType("Check-Out");
-            members[i].setAttendanceDate(date);
-            members[i].setAttendanceTime(time);
-            found = true;
-            break; 
+    bool recordfound = false;
+    int index = 0;
+    int updateindex;
+    do
+    {
+        if (members[index].getMemberId() == memberid)
+        {
+            recordfound = true;
+            updateindex = index;
         }
-    }
+        ++index;
+    } while (!recordfound);
 
-    if (!found) {
-        cout << "Member ID not found." << endl;
-    }
+    members[updateindex].setCheckType("Check-Out");
+    members[updateindex].setAttendanceDate(date);
+    members[updateindex].setAttendanceTime(time);
 }
 
 string generateMemberId()
@@ -324,7 +330,7 @@ void newRegistration()
 {
     string name, contactno, membershipstartdate, membershipduration, membershiptype, activitystatus, memberid;
 
-    cout << "Enter your full name seperated by a dash (Eg, Ali-Abid): ";
+    cout << "Enter your name: ";
     cin >> name;
     cout << "Enter your contact number: ";
     cin >> contactno;
@@ -624,43 +630,39 @@ void managerTerminal()
         }
     } while ((actioninput != 1) && (actioninput != 2) && (actioninput != 3));
 
-    string memberid;
-    if (actioninput == 1 || actioninput == 2) 
+    if (actioninput == 2)
     {
-        cout << "Enter the ID of the member: ";
+        string memberid;
+
+        cout << "Enter the ID of member you want to search the information from: ";
         cin >> memberid;
 
+        searchMember(memberid);
+    }
+    else if (actioninput == 1)
+    {
+        string memberid;
+
+        cout << "Enter the member ID of member you want to edit the information for: ";
+        cin >> memberid;
+
+        bool recordfound;
         int index = 0;
         int lastindex = members.size() - 1;
-        bool recordfound = false;
-
-        while (!recordfound && index <= lastindex)
-        {
+        do {
             if (members[index].getMemberId() == memberid)
             {
                 recordfound = true;
             }
-            ++index;
-        }
-
-        if (!recordfound)
-        {
-            cout << "Error: Member ID not found. Returning to Manager Terminal." << endl;
-            return; 
-        }
-
-        if (actioninput == 2)
-        {
-            searchMember(memberid);
-        }
-        else if (actioninput == 1)
+        } while ((index <= lastindex) && !recordfound);
+        if (recordfound)
         {
             updateMemberInformation(memberid);
         }
-    }
-    else if (actioninput == 3)
-    {
-        cout << "Report Generation feature is under development." << endl;
+        else
+        {
+            cout << "Error: Record not found!";
+        }
     }
 }
 
