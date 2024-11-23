@@ -8,7 +8,7 @@
 #define DATE __DATE__
 using namespace std;
 
-class member
+class Member //class definition for the class that is to be used throughout the program. attributes have been saved in private classes for security purposes so values can't be accessed without getters or setters which have been declared as public
 {
 private:
     string name, contactno, membershiptype, membershipstartdate, membershipduration, activitystatus, memberid;
@@ -17,7 +17,7 @@ private:
     vector<string> attendancetime;
 
 public:
-    member(string name, string contactno, string membershipstartdate, string membershiptype, string membershipduration, string activitystatus, string memberid) : name(name), contactno(contactno), membershipstartdate(membershipstartdate), membershiptype(membershiptype), membershipduration(membershipduration), activitystatus(activitystatus), memberid(memberid) {}
+    Member(string name, string contactno, string membershipstartdate, string membershiptype, string membershipduration, string activitystatus, string memberid) : name(name), contactno(contactno), membershipstartdate(membershipstartdate), membershiptype(membershiptype), membershipduration(membershipduration), activitystatus(activitystatus), memberid(memberid) {}
 
     void setName(string namep)
     {
@@ -115,20 +115,16 @@ public:
     }
 };
 
-ofstream file("members.txt", ios::app);
-
-ofstream file2("attendance.txt", ios::app);
-
-vector<member> members;
+vector<Member> members;
 
 // checked
-void readMainFile()
+void readMainFile() //this function reads the file. it's job is to first store each record as an object and then it pushes the object into the vector 
 {
     ifstream file("members.txt");
     if (file.is_open())
     {
         string name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid;
-        while (getline(file, name)) //this 
+        while (getline(file, name)) 
         {
             getline(file, contactno);
             getline(file, membershipstartdate);
@@ -137,7 +133,7 @@ void readMainFile()
             getline(file, activitystatus);
             getline(file, memberid);
 
-            members.push_back(member(name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid));
+            members.push_back(Member(name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid));
         }
 
         file.close();
@@ -176,8 +172,8 @@ void writeMainFile()
         cout << "Exiting the Program......";
     }
 }
-
-void readAttendanceFile()
+//checked
+void readAttendanceFile() //this functions job is to read the attendance data from attendance file and store it in the corresponding member object
 {
     ifstream file2("attendance.txt");
 
@@ -201,13 +197,14 @@ void readAttendanceFile()
                 if (members[index].getMemberId() == memberid)
                 {
                     recordfound = true;
+                    updateindex = index;
                 }
                 ++index;
             } while (!recordfound);
 
-            members[index].setCheckType(checktype);
-            members[index].setAttendanceDate(attendancedate);
-            members[index].setAttendanceTime(attendancetime);
+            members[updateindex].setCheckType(checktype);
+            members[updateindex].setAttendanceDate(attendancedate);
+            members[updateindex].setAttendanceTime(attendancetime);
         }
         
         file2.close();
@@ -243,10 +240,10 @@ void writeAttendanceFile()
                 attendancedate = members[index1].getAttendanceDate(index2);
                 attendancetime = members[index1].getAttendanceTime(index2);
 
-                file << checktype + '\n';
-                file << attendancedate + '\n';
-                file << attendancetime + '\n';
-                file << memberid + '\n';
+                file2 << checktype + '\n';
+                file2 << attendancedate + '\n';
+                file2 << attendancetime + '\n';
+                file2 << memberid + '\n';
 
                 ++index2;
             }
@@ -330,9 +327,10 @@ void newRegistration()
 {
     string name, contactno, membershipstartdate, membershipduration, membershiptype, activitystatus, memberid;
 
-    cout << "Enter your name: ";
-    cin >> name;
-    cout << "Enter your contact number: ";
+    cout << "Enter your name: " << endl;
+    cin.ignore();
+    getline(cin, name);
+    cout << "Enter your contact number: " << endl;
     cin >> contactno;
     membershipstartdate = __DATE__;
 
@@ -395,24 +393,24 @@ void newRegistration()
 
     activitystatus = "Active";
 
-    members.push_back(member(name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid));
+    members.push_back(Member(name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid));
 }
 
-void memberTerminal()
+void memberTerminal() //main member menu function, it takes inputs and navigates user to inner menus within the main member function. allows users to register themselves, or check in or check out according to their member status 
 {
-    int userinput, userinput2;
+    int memberstatus, checkstatus;
     string memberid;
     do
     {
         cout << "Enter 1 if you are an existing member or enter 2 if you are a new member: ";
-        cin >> userinput;
-        if ((userinput != 1) && (userinput != 2))
+        cin >> memberstatus;
+        if ((memberstatus != 1) && (memberstatus != 2))
         {
             cout << "Enter 1 or 2 only!" << endl;
         }
-    } while ((userinput != 1) && (userinput != 2));
+    } while ((memberstatus != 1) && (memberstatus != 2));
 
-    if (userinput == 2)
+    if (memberstatus == 2)
     {
         newRegistration();
     }
@@ -421,17 +419,17 @@ void memberTerminal()
         do
         {
             cout << "Press 1 to check in or press 2 to check out: ";
-            cin >> userinput2;
-            if ((userinput2 != 1) && (userinput2 != 2))
+            cin >> checkstatus;
+            if ((checkstatus != 1) && (checkstatus != 2))
             {
                 cout << "Enter 1 or 2 only!" << endl;
             }
-        } while ((userinput2 != 1) && (userinput2 != 2));
+        } while ((checkstatus != 1) && (checkstatus != 2));
 
         cout << "Enter your Member ID: ";
         cin >> memberid;
 
-        if (userinput2 == 1)
+        if (checkstatus == 1)
         {
             memberCheckIn(memberid);
         }
@@ -704,7 +702,7 @@ int main()
 {
     readMainFile();
     readAttendanceFile();
-    int userinput, userinput2;
+    int userinput;
     cout << "Welcome to Gym Management System!" << endl;
     do
     {
@@ -728,8 +726,7 @@ int main()
         }
         else
         {
-            cout << "Access Denied!" << endl
-                 << "Restarting System......";
+            cout << "Access Denied!" << endl << "Restarting System......" << endl;
             main();
         }
     }
