@@ -120,6 +120,9 @@ vector<Member> members;
 // checked
 void readMainFile() //this function reads the file. it's job is to first store each record as an object and then it pushes the object into the vector 
 {
+    ofstream file3("members.txt", ios::app);
+    file3.close();
+
     ifstream file("members.txt");
     if (file.is_open())
     {
@@ -147,10 +150,10 @@ void readMainFile() //this function reads the file. it's job is to first store e
 
 void writeMainFile()
 {
-    ofstream file("members.txt", ios::app);
+    ofstream file("members.txt", ios::trunc);
     if (file.is_open())
     {
-        string fileline, name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid;
+        string name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid;
         int lastindex = members.size() - 1;
 
         for (int index = 0; index <= lastindex; ++index)
@@ -162,9 +165,8 @@ void writeMainFile()
             file << members[index].getMembershipDuration() + '\n';
             file << members[index].getActivityStatus() + '\n';
             file << members[index].getMemberId() + '\n';
-
-            file.close();
         }
+        file.close();
     }
     else
     {
@@ -175,6 +177,9 @@ void writeMainFile()
 //checked
 void readAttendanceFile() //this functions job is to read the attendance data from attendance file and store it in the corresponding member object
 {
+    ofstream file4("attendance.txt", ios::app);
+    file4.close();
+    
     ifstream file2("attendance.txt");
 
     if (file2.is_open())
@@ -323,14 +328,15 @@ string generateMemberId()
     return memberid;
 }
 
-void newRegistration()
+// checked
+void newRegistration() // This function registers a new member by taking information about new members and storing the data of member as an object (record)
 {
     string name, contactno, membershipstartdate, membershipduration, membershiptype, activitystatus, memberid;
 
-    cout << "Enter your name: " << endl;
+    cout << "Enter your name: ";
     cin.ignore();
-    getline(cin, name);
-    cout << "Enter your contact number: " << endl;
+    getline(cin, name); //to ignore spaces between inputs
+    cout << "Enter your contact number: ";
     cin >> contactno;
     membershipstartdate = __DATE__;
 
@@ -340,27 +346,27 @@ void newRegistration()
     cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
     cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
 
-    int userinput1, userinput2;
+    int typestatus, durationstatus;
 
     do
     {
-        if ((userinput2 != 1) && (userinput2 != 2) && (userinput2 != 3) && (userinput2 != 4))
+        if ((typestatus != 1) && (typestatus != 2) && (typestatus != 3) && (typestatus != 4))
         {
-            cout << "Enter number ranging from 1-4 only";
+            cout << "Enter number ranging from 1-4 only ";
         }
-        cout << "Enter the number of membership you want (For Silver, press 1; For Silver+, press 2; For Gold; press 3; For Platinum, press 4)" << endl;
-        cin >> userinput2;
-    } while ((userinput2 != 1) && (userinput2 != 2) && (userinput2 != 3) && (userinput2 != 4));
+        cout << "Enter the number of membership you want (For Silver, Press 1; For Silver+ , Press 2; For Gold; Press 3; For Platinum, Press 4): " << endl;
+        cin >> typestatus;
+    } while ((typestatus != 1) && (typestatus != 2) && (typestatus != 3) && (typestatus != 4));
 
-    if (userinput2 == 1)
+    if (typestatus == 1)
     {
         membershiptype = "Silver";
     }
-    else if (userinput2 == 2)
+    else if (typestatus == 2)
     {
         membershiptype = "Silver+";
     }
-    else if (userinput2 == 3)
+    else if (typestatus == 3)
     {
         membershiptype = "Gold";
     }
@@ -372,15 +378,15 @@ void newRegistration()
     cout << "Membership Duration: " << endl;
     do
     {
-        if ((userinput1 != 1) && (userinput1 != 2))
+        if ((durationstatus != 1) && (durationstatus != 2))
         {
             cout << "Enter 1 or 2 only!" << endl;
         }
         cout << "Enter 1 if you want monthly membership or enter 2 if you want yearly membership: " << endl;
-        cin >> userinput1;
-    } while ((userinput1 != 1) && (userinput1 != 2));
+        cin >> durationstatus;
+    } while ((durationstatus != 1) && (durationstatus != 2));
 
-    if (userinput1 == 1)
+    if (durationstatus == 1)
     {
         membershipduration = "Monthly";
     }
