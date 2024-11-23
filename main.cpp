@@ -646,7 +646,24 @@ void managerTerminal()
 
         cout << "Enter the member ID of member you want to edit the information for: ";
         cin >> memberid;
-        updateMemberInformation(memberid);
+
+        bool recordfound;
+        int index = 0;
+        int lastindex = members.size() - 1;
+        do {
+            if (members[index].getMemberId() == memberid)
+            {
+                recordfound = true;
+            }
+        } while ((index <= lastindex) && !recordfound);
+        if (recordfound)
+        {
+            updateMemberInformation(memberid);
+        }
+        else
+        {
+            cout << "Error: Record not found!";
+        }
     }
 }
 
