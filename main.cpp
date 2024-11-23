@@ -262,52 +262,45 @@ void writeAttendanceFile()
     }
 }
 
-void memberCheckIn(string memberid)
-{
+void memberCheckIn(string memberid) {
     string time, date;
     time = __TIME__;
     date = __DATE__;
 
-    bool recordfound = false;
-    int index = 0;
-    int updateindex;
-    do
-    {
-        if (members[index].getMemberId() == memberid)
-        {
-            recordfound = true;
-            updateindex = index;
+    bool found = false;
+    for (int i = 0; i < members.size(); ++i) {
+        if (members[i].getMemberId() == memberid) {
+            members[i].setCheckType("Check-In");
+            members[i].setAttendanceDate(date);
+            members[i].setAttendanceTime(time);
+            found = true;
+            break; 
         }
-        ++index;
-    } while (!recordfound);
+    }
 
-    members[updateindex].setCheckType("Check-In");
-    members[updateindex].setAttendanceDate(date);
-    members[updateindex].setAttendanceTime(time);
+    if (!found) {
+        cout << "Member ID not found." << endl;
+    }
 }
-
-void memberCheckOut(string memberid)
-{
+void memberCheckOut(string memberid) {
     string time, date;
     time = __TIME__;
     date = __DATE__;
 
-    bool recordfound = false;
-    int index = 0;
-    int updateindex;
-    do
-    {
-        if (members[index].getMemberId() == memberid)
-        {
-            recordfound = true;
-            updateindex = index;
+    bool found = false;
+    for (int i = 0; i < members.size(); ++i) {
+        if (members[i].getMemberId() == memberid) {
+            members[i].setCheckType("Check-Out");
+            members[i].setAttendanceDate(date);
+            members[i].setAttendanceTime(time);
+            found = true;
+            break; 
         }
-        ++index;
-    } while (!recordfound);
+    }
 
-    members[updateindex].setCheckType("Check-Out");
-    members[updateindex].setAttendanceDate(date);
-    members[updateindex].setAttendanceTime(time);
+    if (!found) {
+        cout << "Member ID not found." << endl;
+    }
 }
 
 string generateMemberId()
@@ -331,7 +324,7 @@ void newRegistration()
 {
     string name, contactno, membershipstartdate, membershipduration, membershiptype, activitystatus, memberid;
 
-    cout << "Enter your name: ";
+    cout << "Enter your full name seperated by a dash (Eg, Ali-Abid): ";
     cin >> name;
     cout << "Enter your contact number: ";
     cin >> contactno;
@@ -631,39 +624,43 @@ void managerTerminal()
         }
     } while ((actioninput != 1) && (actioninput != 2) && (actioninput != 3));
 
-    if (actioninput == 2)
+    string memberid;
+    if (actioninput == 1 || actioninput == 2) 
     {
-        string memberid;
-
-        cout << "Enter the ID of member you want to search the information from: ";
+        cout << "Enter the ID of the member: ";
         cin >> memberid;
 
-        searchMember(memberid);
-    }
-    else if (actioninput == 1)
-    {
-        string memberid;
-
-        cout << "Enter the member ID of member you want to edit the information for: ";
-        cin >> memberid;
-
-        bool recordfound;
         int index = 0;
         int lastindex = members.size() - 1;
-        do {
+        bool recordfound = false;
+
+        while (!recordfound && index <= lastindex)
+        {
             if (members[index].getMemberId() == memberid)
             {
                 recordfound = true;
             }
-        } while ((index <= lastindex) && !recordfound);
-        if (recordfound)
+            ++index;
+        }
+
+        if (!recordfound)
+        {
+            cout << "Error: Member ID not found. Returning to Manager Terminal." << endl;
+            return; 
+        }
+
+        if (actioninput == 2)
+        {
+            searchMember(memberid);
+        }
+        else if (actioninput == 1)
         {
             updateMemberInformation(memberid);
         }
-        else
-        {
-            cout << "Error: Record not found!";
-        }
+    }
+    else if (actioninput == 3)
+    {
+        cout << "Report Generation feature is under development." << endl;
     }
 }
 
