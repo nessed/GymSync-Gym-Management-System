@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -738,3 +739,6 @@ int main()
 
     return 0;
 }
+=======
+searchMember
+>>>>>>> 4de4325a55e3c48ccc6c91699eb4282b90a9bd5f
