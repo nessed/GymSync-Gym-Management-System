@@ -276,7 +276,19 @@ int getVisitFrequency(int memberindex)
 
     return counter;
 }
+string calculateDuration(string checkInTime, string checkOutTime)
+{
+    int inHour = stoi(checkInTime.substr(0, 2));
+    int inMinute = stoi(checkInTime.substr(3, 2));
+    int outHour = stoi(checkOutTime.substr(0, 2));
+    int outMinute = stoi(checkOutTime.substr(3, 2));
 
+    int durationMinutes = (outHour * 60 + outMinute) - (inHour * 60 + inMinute);
+    int hours = durationMinutes / 60;
+    int minutes = durationMinutes % 60;
+
+    return to_string(hours) + " hour(s) and " + to_string(minutes) + " minute(s)";
+}
 //checked
 void memberCheckIn(string memberid) // This function stores the check in data of user in the record including date and time of check in
 {
@@ -302,7 +314,7 @@ void memberCheckIn(string memberid) // This function stores the check in data of
     members[updateindex].setAttendanceTime(time);
 }
 
-void memberCheckOut(string memberid) //This function stores the check out data of user in the record including date and time of check out
+void memberCheckOut(string memberid)
 {
     string time, date;
     time = __TIME__;
@@ -321,10 +333,27 @@ void memberCheckOut(string memberid) //This function stores the check out data o
         ++index;
     } while (!recordfound);
 
+    // Fetch the last Check-In time
+    int lastIndex = members[updateindex].getCheckTypeSize();
+    if (members[updateindex].getCheckType(lastIndex) == "Check-In")
+    {
+        string checkInTime = members[updateindex].getAttendanceTime(lastIndex);
+        string duration = calculateDuration(checkInTime, time);
+        cout << "Workout Duration: " << duration << endl;
+    }
+    else
+    {
+        cout << "Error: No valid Check-In record found!" << endl;
+        return;
+    }
+
+    // Update Check-Out data
     members[updateindex].setCheckType("Check-Out");
     members[updateindex].setAttendanceDate(date);
     members[updateindex].setAttendanceTime(time);
 }
+
+
 
 string generateMemberId() // This function generates a new unique member id each time
 {
