@@ -310,7 +310,7 @@ bool expiryChecker(string registerdate, string membershipduration)
     }
 }
 
-int getVisitFrequency(int memberindex)
+int getVisitFrequency(int memberindex) // This function returns the total number of times member has visited gym
 {
     int size = members[memberindex].getCheckTypeSize();
     int frequency;
@@ -327,10 +327,9 @@ int getVisitFrequency(int memberindex)
 
 void generateReport() 
 {
-    int totalRevenue = 0;             // Variable to store total revenue
-    int totalExpiredMemberships = 0; // Counter for expired memberships
+    int totalrevenue = 0;             
+    int totalexpiredmemberships = 0; 
 
-    // Loop through all members to generate a report for each one
     for (int index = 0; index < members.size(); ++index) 
     {
         Member member = members[index];
@@ -340,16 +339,15 @@ void generateReport()
         cout << "Membership Type: " << member.getMembershipType() << endl;
         cout << "Membership Duration: " << member.getMembershipDuration() << endl;
 
-        int visitfrequency = getVisitFrequency(index);  // Now using `index` instead of `memberindex`
+        int visitfrequency = getVisitFrequency(index);
         cout << "Visit Frequency: " << visitfrequency << " times" << endl;
 
         bool isexpired = expiryChecker(member.getMembershipStartDate(), member.getMembershipDuration());
         cout << "Membership Expired: " << (isexpired ? "Yes" : "No") << endl;
 
-        // Increment expired membership counter if expired
         if (isexpired) 
         {
-            totalExpiredMemberships++;
+            ++totalexpiredmemberships;
         }
 
         int membershipfee = 0;
@@ -376,17 +374,15 @@ void generateReport()
                 membershipfee = 32;
         }
 
-        // Add to total revenue
-        totalRevenue += membershipfee;
+        totalrevenue += membershipfee;
 
         cout << "Membership Fee: $" << membershipfee << endl;
         cout << "-----------------------------------" << endl;
     }
 
-    // Display the total revenue and total expired memberships after all member reports
     cout << "===================================" << endl;
-    cout << "Total Revenue from All Memberships: $" << totalRevenue << endl;
-    cout << "Total Expired Memberships: " << totalExpiredMemberships << endl;
+    cout << "Total Revenue from All Memberships: $" << totalrevenue << endl;
+    cout << "Total Expired Memberships: " << totalexpiredmemberships << endl;
     cout << "===================================" << endl;
 }
 
@@ -426,6 +422,7 @@ void memberCheckIn(string memberid) // This function stores the check in data of
     members[updateindex].setCheckType("Check-In");
     members[updateindex].setAttendanceDate(date);
     members[updateindex].setAttendanceTime(time);
+    cout<<"You have checked in!"<<endl;
 }
 
 void memberCheckOut(string memberid)
@@ -456,6 +453,8 @@ void memberCheckOut(string memberid)
     members[updateindex].setCheckType("Check-Out");
     members[updateindex].setAttendanceDate(date);
     members[updateindex].setAttendanceTime(time);
+    cout<<"You have checked out!"<<endl;
+
 }
 
 string generateMemberId() // This function generates a new unique member id each time
@@ -549,7 +548,7 @@ void newRegistration() // This function registers a new member by taking informa
     members.push_back(Member(name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid));
 
     cout << "Registration Successful!" << endl;
-    cout << "Your Member ID is " << memberid;
+    cout << "Your Member ID is " << memberid <<endl;
 }
 
 void memberTerminal() // main member menu function, it takes inputs and navigates user to inner menus within the main member function. allows users to register themselves, or check in or check out according to their member status
@@ -607,7 +606,7 @@ void memberTerminal() // main member menu function, it takes inputs and navigate
                 int lastindex = members[updateindex].getCheckTypeSize();
                 if (lastindex > 0)
                 {
-                    lastchecktype = members[updateindex].getCheckType(lastindex);
+                    lastchecktype = members[updateindex-1].getCheckType(lastindex);
                     if (checkstatus == 1)
                     {
                         if (lastchecktype != "Check-In")
@@ -844,14 +843,10 @@ void searchMember(string memberid) // This function is used to loop through the 
 void managerTerminal() // main manager interface function, it takes inputs and navigates user to inner menus within the main manager function.
 {
     int actioninput;
-    cout << "Select any action you want from the list below: " << endl;
-    cout << "   1, Update Member Information" << endl;
-    cout << "   2, Search Member Details" << endl;
-    cout << "   3, Generate Report";
-
+   
     do
     {
-        cout << "Enter 1 to Update Member Information; Enter 2 to Search for Member Details";
+        cout << "Enter 1 to Update Member Information; Enter 2 to Search for Member Details, Enter 3 to Generate Report: "<<endl;
         cin >> actioninput;
         if ((actioninput != 1) && (actioninput != 2) && (actioninput != 3))
         {
@@ -922,6 +917,7 @@ bool passwordCheck() // This function checks if the password entered by the user
         {
             cout << "Wrong password. Please Try again!" << endl;
         }
+        ++attempts;
     } while (attempts <= 4 && !access);
 
     if (!access)
@@ -965,7 +961,6 @@ void expiryStatusNotifier()
         }
     }
 }
-
 int main()
 {
     // First, we read the data from files to the vector storing the records of members
@@ -974,15 +969,23 @@ int main()
 
     int userinput;
     cout << "Welcome to Gym Management System!" << endl;
+
     do
     {
         cout << "Enter 1 if you are a Member or enter 2 if you are a Manager: ";
         cin >> userinput;
-        if ((userinput != 1) && (userinput != 2))
+
+        if (cin.fail() || (userinput != 1 && userinput != 2)) // Check for invalid input
         {
-            cout << "Enter 1 or 2 only!" << endl;
+            cout << "Invalid input! Enter 1 or 2 only!" << endl;
+            cin.clear(); // Clear the error flag on cin
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore invalid input
         }
-    } while ((userinput != 1) && (userinput != 2));
+        else
+        {
+            break; // Valid input, exit loop
+        }
+    } while (true);
 
     if (userinput == 1)
     {

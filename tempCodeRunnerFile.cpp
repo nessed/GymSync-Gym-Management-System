@@ -1,3 +1,2 @@
-< endl;
-            } 
-        } while ((userinput2 != 1
+
+    tm registration
