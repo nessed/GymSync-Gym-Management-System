@@ -1,16 +1,17 @@
 #include <iostream>
-#include <ctime> 
+#include <iomanip>
+#include <ctime>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <chrono>
-#include <ctime>
+#include <cmath>
 
-#define TIME __TIME__
-#define DATE __DATE__
+#define TIME _TIME_
+#define DATE _DATE_
 using namespace std;
 
-class Member //class definition for the class that is to be used throughout the program. attributes have been saved in private classes for security purposes so values can't be accessed without getters or setters which have been declared as public
+class Member // class definition for the class that is to be used throughout the program. attributes have been saved in private classes for security purposes so values can't be accessed without getters or setters which have been declared as public
 {
 private:
     string name, contactno, membershiptype, membershipstartdate, membershipduration, activitystatus, memberid;
@@ -106,21 +107,21 @@ public:
 
     int getCheckTypeSize() const // function for determining size of checktype vector
     {
-        return checktype.size() - 1; 
+        return checktype.size() - 1;
     }
     int getAttendanceDateSize() const
     {
-        return attendancedate.size() - 1; 
+        return attendancedate.size() - 1;
     }
     int getAttendanceTimeSize() const
     {
-        return attendancetime.size() - 1; 
+        return attendancetime.size() - 1;
     }
 };
 
 vector<Member> members; // This vector stores the object of class 'Member' which store the record of a member
 
-void readMainFile() //this function reads the file. it's job is to first store each record as an object and then it pushes the object into the vector 
+void readMainFile() // this function reads the file. it's job is to first store each record as an object and then it pushes the object into the vector
 {
     ofstream file3("members.txt", ios::app); // These two lines ensure that the members information file exists
     file3.close();
@@ -129,7 +130,7 @@ void readMainFile() //this function reads the file. it's job is to first store e
     if (file.is_open())
     {
         string name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid;
-        while (getline(file, name)) 
+        while (getline(file, name))
         {
             getline(file, contactno);
             getline(file, membershipstartdate);
@@ -178,10 +179,10 @@ void writeMainFile() // This function writes the member information to the membe
 }
 
 void readAttendanceFile() // This function's job is to read the attendance data from attendance file and store it in the corresponding member object
-{   
+{
     ofstream file4("attendance.txt", ios::app); // These two lines ensure that the members attendance file exists
     file4.close();
-    
+
     ifstream file2("attendance.txt");
 
     if (file2.is_open())
@@ -194,7 +195,7 @@ void readAttendanceFile() // This function's job is to read the attendance data 
             getline(file2, attendancetime);
             getline(file2, memberid);
             int updateindex = -1;
-            int lastindex = members.size() -  1;
+            int lastindex = members.size() - 1;
 
             for (int index = 0; index <= lastindex; ++index)
             {
@@ -212,7 +213,7 @@ void readAttendanceFile() // This function's job is to read the attendance data 
                 members[updateindex].setAttendanceTime(attendancetime);
             }
         }
-        
+
         file2.close();
     }
     else
@@ -225,11 +226,11 @@ void readAttendanceFile() // This function's job is to read the attendance data 
 void writeAttendanceFile() // This function takes members attendance data from objects in 'members' vector and stores it in the file
 {
     ofstream file2("attendance.txt", ios::trunc);
-    
+
     if (file2.is_open())
     {
-        int lastindex1 = members.size() - 1; //for vectors
-        
+        int lastindex1 = members.size() - 1; // for vectors
+
         for (int index = 0; index <= lastindex1; ++index)
         {
             int lastindex2;
@@ -260,7 +261,8 @@ void writeAttendanceFile() // This function takes members attendance data from o
 
         file2.close();
     }
-    else {
+    else
+    {
         cout << "Cannot open attendance file for writing" << endl;
         cout << "Exiting System......";
     }
@@ -278,20 +280,20 @@ int getVisitFrequency(int memberindex)
 
     return counter;
 }
-string calculateDuration(string checkInTime, string checkOutTime)
+string calculateDuration(string checkintime, string checkouttime)
 {
-    int inHour = stoi(checkInTime.substr(0, 2));
-    int inMinute = stoi(checkInTime.substr(3, 2));
-    int outHour = stoi(checkOutTime.substr(0, 2));
-    int outMinute = stoi(checkOutTime.substr(3, 2));
+    int checkinhour = stoi(checkintime.substr(0, 2));
+    int checkinminute = stoi(checkintime.substr(3, 2));
+    int checkouthour = stoi(checkouttime.substr(0, 2));
+    int checkoutminute = stoi(checkouttime.substr(3, 2));
 
-    int durationMinutes = (outHour * 60 + outMinute) - (inHour * 60 + inMinute);
-    int hours = durationMinutes / 60;
-    int minutes = durationMinutes % 60;
+    int durationminutes = (checkouthour * 60 + checkoutminute) - (checkinhour * 60 + checkinminute);
+    int hours = durationminutes / 60;
+    int minutes = durationminutes % 60;
 
     return to_string(hours) + " hour(s) and " + to_string(minutes) + " minute(s)";
 }
-//checked
+
 void memberCheckIn(string memberid) // This function stores the check in data of user in the record including date and time of check in
 {
     string time, date;
@@ -335,27 +337,16 @@ void memberCheckOut(string memberid)
         ++index;
     } while (!recordfound);
 
-    // Fetch the last Check-In time
-    int lastIndex = members[updateindex].getCheckTypeSize();
-    if (members[updateindex].getCheckType(lastIndex) == "Check-In")
-    {
-        string checkInTime = members[updateindex].getAttendanceTime(lastIndex);
-        string duration = calculateDuration(checkInTime, time);
-        cout << "Workout Duration: " << duration << endl;
-    }
-    else
-    {
-        cout << "Error: No valid Check-In record found!" << endl;
-        return;
-    }
+    int lastindex = members[updateindex].getCheckTypeSize();
 
-    // Update Check-Out data
+    string checkintime = members[updateindex].getAttendanceTime(lastindex);
+    string duration = calculateDuration(checkintime, time);
+    cout << "Workout Duration: " << duration << endl;
+
     members[updateindex].setCheckType("Check-Out");
     members[updateindex].setAttendanceDate(date);
     members[updateindex].setAttendanceTime(time);
 }
-
-
 
 string generateMemberId() // This function generates a new unique member id each time
 {
@@ -380,7 +371,7 @@ void newRegistration() // This function registers a new member by taking informa
 
     cout << "Enter your name: ";
     cin.ignore();
-    getline(cin, name); //to ignore spaces between inputs
+    getline(cin, name); // to ignore spaces between inputs
     cout << "Enter your contact number: ";
     cin >> contactno;
     membershipstartdate = __DATE__;
@@ -389,7 +380,8 @@ void newRegistration() // This function registers a new member by taking informa
     cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
     cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
     cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
-    cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
+    cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl
+         << endl;
 
     int typestatus, durationstatus;
 
@@ -452,10 +444,9 @@ void newRegistration() // This function registers a new member by taking informa
 
 void reportGeneration()
 {
-    
 }
 
-void memberTerminal() //main member menu function, it takes inputs and navigates user to inner menus within the main member function. allows users to register themselves, or check in or check out according to their member status 
+void memberTerminal() // main member menu function, it takes inputs and navigates user to inner menus within the main member function. allows users to register themselves, or check in or check out according to their member status
 {
     int memberstatus, checkstatus;
     string memberid;
@@ -486,7 +477,8 @@ void memberTerminal() //main member menu function, it takes inputs and navigates
         } while ((checkstatus != 1) && (checkstatus != 2));
         bool recordfound = false;
 
-        do {
+        do
+        {
             cout << "Enter your Member ID: ";
             cin >> memberid;
 
@@ -494,7 +486,8 @@ void memberTerminal() //main member menu function, it takes inputs and navigates
             int index = 0;
             int updateindex;
             recordfound = false;
-            do {
+            do
+            {
                 if (members[index].getMemberId() == memberid)
                 {
                     recordfound = true;
@@ -502,45 +495,58 @@ void memberTerminal() //main member menu function, it takes inputs and navigates
                 }
                 ++index;
             } while ((index <= lastindex) && !recordfound);
-
             if (recordfound)
             {
+                string lastchecktype;
                 int lastindex = members[updateindex].getCheckTypeSize();
-                string lastchecktype = members[updateindex].getCheckType(lastindex);
-                if (checkstatus == 1)
+                if (lastindex > 0)
                 {
-                    if (lastchecktype != "Check-In")
+                    lastchecktype = members[updateindex].getCheckType(lastindex);
+                    if (checkstatus == 1)
                     {
-                        memberCheckIn(memberid);
+                        if (lastchecktype != "Check-In")
+                        {
+                            memberCheckIn(memberid);
+                        }
+                        else
+                        {
+                            cout << "Error: You have already checked in before" << endl;
+                            cout << "Redirecting to member terminal" << endl;
+                            memberTerminal();
+                        }
                     }
                     else
                     {
-                        cout << "Error: You have already checked in before" << endl;
-                        cout << "Redirecting to member terminal" << endl;
-                        memberTerminal();
+                        if (lastchecktype == "Check-In")
+                        {
+                            memberCheckIn(memberid);
+                        }
+                        else
+                        {
+                            cout << "Error: You have already checked out before" << endl;
+                            cout << "Redirecting to member terminal" << endl;
+                            memberTerminal();
+                        }
                     }
                 }
                 else
                 {
-                    if (lastchecktype == "Check-In")
+                    if (checkstatus == 1)
                     {
                         memberCheckIn(memberid);
                     }
                     else
                     {
-                        cout << "Error: You have already checked out before" << endl;
-                        cout << "Redirecting to member terminal" << endl;
-                        memberTerminal();
+                        memberCheckOut(memberid);
                     }
                 }
             }
-            else {
+            else
+            {
                 cout << "Error: Record Not Found!" << endl;
                 cout << "Please Enter correct member ID" << endl;
-            
             }
         } while (!recordfound);
-        
     }
 }
 
@@ -582,7 +588,8 @@ void updateMemberInformation(string memberid) // This function asks user about w
             cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
             cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
             cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
-            cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
+            cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl
+                 << endl;
 
             int userinput;
             do
@@ -595,21 +602,24 @@ void updateMemberInformation(string memberid) // This function asks user about w
                 cin >> userinput;
             } while ((userinput != 1) && (userinput != 2) && (userinput != 3) && (userinput != 4));
 
-            if (userinput == 1) {
+            if (userinput == 1)
+            {
                 membershiptype = "Silver";
             }
-            else if (userinput == 2) {
+            else if (userinput == 2)
+            {
                 membershiptype = "Silver+";
             }
-            else if (userinput == 3) {
+            else if (userinput == 3)
+            {
                 membershiptype = "Gold";
             }
-            else {
+            else
+            {
                 membershiptype = "Platinum";
             }
 
             members[updateindex].setMembershipType(membershiptype);
-
         }
         else if (actioninput2 == 2)
         {
@@ -617,7 +627,8 @@ void updateMemberInformation(string memberid) // This function asks user about w
             cout << "   1. Silver - Gym only (monthly: $10, yearly: $110)" << endl;
             cout << "   2. Silver+ - Gym and Cardio only (monthly: $15.5, yearly: $160)" << endl;
             cout << "   3. Gold - Gym only with a trainer (monthly: $30, yearly: $300)" << endl;
-            cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl << endl;
+            cout << "   4. Platinum - Gym, Cardio and a trainer (monnthly: $32, yearly: $310)" << endl
+                 << endl;
 
             int userinput;
             do
@@ -629,11 +640,13 @@ void updateMemberInformation(string memberid) // This function asks user about w
                 cout << "Enter 1 if you want monthly membership or enter 2 if you want yearly membership: " << endl;
                 cin >> userinput;
             } while ((userinput != 1) && (userinput != 2));
-            
-            if (userinput == 1) {
+
+            if (userinput == 1)
+            {
                 membershipduration = "Monthly";
             }
-            else {
+            else
+            {
                 membershipduration = "Yearly";
             }
 
@@ -651,11 +664,13 @@ void updateMemberInformation(string memberid) // This function asks user about w
                 cout << "Enter 1 to set activity status of user as active or 0 to set activity status of user as inactive" << endl;
                 cin >> userinput;
             } while ((userinput != 1) && (userinput != 0));
-            
-            if (userinput == 0) {
+
+            if (userinput == 0)
+            {
                 activitystatus = "Inactive";
             }
-            else {
+            else
+            {
                 activitystatus = "Active";
             }
 
@@ -720,7 +735,7 @@ void searchMember(string memberid) // This function is used to loop through the 
     }
 }
 
-void managerTerminal() //main manager interface function, it takes inputs and navigates user to inner menus within the main manager function. 
+void managerTerminal() // main manager interface function, it takes inputs and navigates user to inner menus within the main manager function.
 {
     int actioninput;
     cout << "Select any action you want from the list below: " << endl;
@@ -730,7 +745,7 @@ void managerTerminal() //main manager interface function, it takes inputs and na
 
     do
     {
-        cout << "Enter 1 to Update Member Information; Enter 2 to Search for Member Details"; 
+        cout << "Enter 1 to Update Member Information; Enter 2 to Search for Member Details";
         cin >> actioninput;
         if ((actioninput != 1) && (actioninput != 2) && (actioninput != 3))
         {
@@ -747,7 +762,7 @@ void managerTerminal() //main manager interface function, it takes inputs and na
 
         searchMember(memberid);
     }
-    else if  (actioninput == 1)
+    else if (actioninput == 1)
     {
         string memberid;
 
@@ -757,7 +772,8 @@ void managerTerminal() //main manager interface function, it takes inputs and na
         bool recordfound;
         int index = 0;
         int lastindex = members.size() - 1;
-        do {
+        do
+        {
             if (members[index].getMemberId() == memberid)
             {
                 recordfound = true;
@@ -772,7 +788,7 @@ void managerTerminal() //main manager interface function, it takes inputs and na
             cout << "Error: Record not found!";
         }
     }
-    else 
+    else
     {
         reportGeneration();
     }
@@ -812,11 +828,85 @@ bool passwordCheck() // This function checks if the password entered by the user
     }
 }
 
+bool expiryChecker(string registerdate, string membershipduration)
+{
+    tm registrationtime = {};
+    istringstream timeclass(registerdate);
+    timeclass >> get_time(&registrationtime, "%b %d %Y"); // Format: "Mon DD YYYY"
+    if (timeclass.fail())
+    {
+        cout << "Error: Invalid registration date format!" << endl;
+        return false;
+    }
+
+    time_t registrationtime2 = mktime(&registrationtime); // Convert to time_t for seconds calculation
+    time_t expirytime;
+
+    // Add 30 or 365 days depending on membership duration
+    if (membershipduration == "Monthly")
+    {
+        expirytime = registrationtime2 + (30 * 24 * 60 * 60);
+    }
+    else if (membershipduration == "Yearly")
+    {
+        expirytime = registrationtime2 + (365 * 24 * 60 * 60);
+    }
+    else
+    {
+        cout << "Error: Invalid membership duration!" << endl;
+        return false;
+    }
+
+    time_t currenttime = time(nullptr); // Current date in seconds
+
+    // Return true if membership has expired
+    if (difftime(currenttime, expirytime) > 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void expiryStatusNotifier()
+{
+    for (int index = 0; index < members.size(); ++index)
+    {
+        // Check if the membership is expired
+        bool isexpired = expiryChecker(
+            members[index].getMembershipStartDate(),
+            members[index].getMembershipDuration());
+
+        if (isexpired)
+        {
+            cout << "Membership for " << members[index].getName() << " (ID: " << members[index].getMemberId() << ") has expired!" << endl;
+
+            cout << "Do you want to re-register this member? (Enter 1 for Yes, 0 for No): ";
+            int choice;
+            cin >> choice;
+
+            if (choice == 1)
+            {
+                // Call newRegistration() to re-register
+                cout << "Redirecting to registration process..." << endl;
+                members[index].setActivityStatus("Active");
+            }
+            else
+            {
+                members[index].setActivityStatus("Inactive");
+                cout << "Membership marked as Inactive." << endl;
+            }
+        }
+    }
+}
+
 int main()
 {
     // First, we read the data from files to the vector storing the records of members
     readMainFile();
-    readAttendanceFile(); 
+    readAttendanceFile();
 
     int userinput;
     cout << "Welcome to Gym Management System!" << endl;
@@ -842,10 +932,15 @@ int main()
         }
         else
         {
-            cout << "Access Denied!" << endl << "Restarting System......" << endl << endl << endl;
+            cout << "Access Denied!" << endl
+                 << "Restarting System......" << endl
+                 << endl
+                 << endl;
             main();
         }
     }
+
+    expiryStatusNotifier();
 
     // Lastly, data is stored from vector storing members objects to the files, ensuring the files are up to date
     writeAttendanceFile();
