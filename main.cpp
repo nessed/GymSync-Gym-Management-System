@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 #include <iomanip>
 #include <ctime>
@@ -229,7 +231,7 @@ void writeAttendanceFile() // This function takes members attendance data from o
 
     if (file2.is_open())
     {
-        int lastindex1 = members.size() - 1; // for vectors
+        int lastindex1 = members.size() - 1;
 
         for (int index = 0; index <= lastindex1; ++index)
         {
@@ -272,17 +274,16 @@ bool expiryChecker(string registerdate, string membershipduration)
 {
     tm registrationtime = {};
     istringstream timeclass(registerdate);
-    timeclass >> get_time(&registrationtime, "%b %d %Y"); // Format: "Mon DD YYYY"
+    timeclass >> get_time(&registrationtime, "%b %d %Y"); 
     if (timeclass.fail())
     {
         cout << "Error: Invalid registration date format!" << endl;
         return false;
     }
 
-    time_t registrationtime2 = mktime(&registrationtime); // Convert to time_t for seconds calculation
+    time_t registrationtime2 = mktime(&registrationtime); 
     time_t expirytime;
 
-    // Add 30 or 365 days depending on membership duration
     if (membershipduration == "Monthly")
     {
         expirytime = registrationtime2 + (30 * 24 * 60 * 60);
@@ -297,9 +298,8 @@ bool expiryChecker(string registerdate, string membershipduration)
         return false;
     }
 
-    time_t currenttime = time(nullptr); // Current date in seconds
+    time_t currenttime = time(nullptr); 
 
-    // Return true if membership has expired
     if (difftime(currenttime, expirytime) > 0)
     {
         return true;
@@ -409,7 +409,6 @@ void memberCheckIn(string memberid)
     bool recordfound = false;
     int updateindex = -1;
 
-    // Search for the member in the vector
     for (int index = 0; index < members.size(); ++index)
     {
         if (members[index].getMemberId() == memberid)
@@ -420,14 +419,12 @@ void memberCheckIn(string memberid)
         }
     }
 
-    // If the member is not found, display an error
     if (!recordfound)
     {
         cout << "Error: Member ID not found. Check-In not possible." << endl;
         return;
     }
 
-    // Check if the last record for the member is "Check-In"
     int lastIndex = members[updateindex].getCheckTypeSize();
     if (lastIndex >= 0 && members[updateindex].getCheckType(lastIndex) == "Check-In")
     {
@@ -435,7 +432,6 @@ void memberCheckIn(string memberid)
         return;
     }
 
-    // Perform the check-in
     members[updateindex].setCheckType("Check-In");
     members[updateindex].setAttendanceDate(date);
     members[updateindex].setAttendanceTime(time);
@@ -967,11 +963,10 @@ bool passwordCheck() // This function checks if the password entered by the user
     }
 }
 
-void expiryStatusNotifier()
+void expiryStatusNotifier() // This function notifies the member if the membership is expired for any member
 {
     for (int index = 0; index < members.size(); ++index)
     {
-        // Check if the membership is expired
         bool isexpired = expiryChecker(
             members[index].getMembershipStartDate(),
             members[index].getMembershipDuration());
@@ -986,7 +981,6 @@ void expiryStatusNotifier()
 
             if (choice == 1)
             {
-                // Call newRegistration() to re-register
                 cout << "Redirecting to registration process..." << endl;
                 members[index].setActivityStatus("Active");
             }
@@ -1000,7 +994,7 @@ void expiryStatusNotifier()
 }
 int main()
 {
-    // First, we read the data from files to the vector storing the records of members
+    // First, we read the data from files
     readMainFile();
     readAttendanceFile();
 
@@ -1012,15 +1006,15 @@ int main()
         cout << "Enter 1 if you are a Member or enter 2 if you are a Manager: ";
         cin >> userinput;
 
-        if (cin.fail() || (userinput != 1 && userinput != 2)) // Check for invalid input
+        if (cin.fail() || (userinput != 1 && userinput != 2)) 
         {
             cout << "Invalid input! Enter 1 or 2 only!" << endl;
-            cin.clear(); // Clear the error flag on cin
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore invalid input
+            cin.clear(); 
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
         }
         else
         {
-            break; // Valid input, exit loop
+            break; 
         }
     } while (true);
 
@@ -1037,16 +1031,14 @@ int main()
         else
         {
             cout << "Access Denied!" << endl
-                 << "Restarting System......" << endl
-                 << endl
-                 << endl;
+                 << "Restarting System......" << endl << endl << endl;
             main();
         }
     }
 
     expiryStatusNotifier();
 
-    // Lastly, data is stored from vector storing members objects to the files, ensuring the files are up to date
+    // Lastly, we will write data to the files
     writeAttendanceFile();
     writeMainFile();
 
