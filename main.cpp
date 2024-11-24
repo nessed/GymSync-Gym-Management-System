@@ -1,4 +1,4 @@
-
+// GymSync (Simple Gym Membership Management System)
 
 #include <iostream>
 #include <iomanip>
@@ -270,7 +270,7 @@ void writeAttendanceFile() // This function takes members attendance data from o
     }
 }
 
-bool expiryChecker(string registerdate, string membershipduration)
+bool expiryChecker(string registerdate, string membershipduration) // This function checks if membership of any member has expired
 {
     tm registrationtime = {};
     istringstream timeclass(registerdate);
@@ -386,7 +386,7 @@ void generateReport()
     cout << "===================================" << endl;
 }
 
-string calculateDuration(string checkintime, string checkouttime)
+string calculateDuration(string checkintime, string checkouttime) // This function calculates the duration of workout of member
 {
     int checkinhour = stoi(checkintime.substr(0, 2));
     int checkinminute = stoi(checkintime.substr(3, 2));
@@ -400,7 +400,7 @@ string calculateDuration(string checkintime, string checkouttime)
     return to_string(hours) + " hour(s) and " + to_string(minutes) + " minute(s)";
 }
 
-void memberCheckIn(string memberid) 
+void memberCheckIn(string memberid) // This function checks in the member
 {
     string time, date;
     time = __TIME__;
@@ -438,7 +438,7 @@ void memberCheckIn(string memberid)
     cout << "You have checked in!" << endl;
 }
 
-void memberCheckOut(string memberid)
+void memberCheckOut(string memberid) //This function checks out the member 
 {
     string time, date;
     time = __TIME__;
