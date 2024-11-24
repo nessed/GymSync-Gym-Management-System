@@ -1,9 +1,11 @@
 #include <iostream>
+#include <ctime> 
 #include <string>
 #include <fstream>
 #include <vector>
 #include <chrono>
 #include <ctime>
+
 #define TIME __TIME__
 #define DATE __DATE__
 using namespace std;
@@ -60,57 +62,57 @@ public:
         attendancetime.push_back(timep);
     }
 
-    string getName()
+    string getName() const
     {
         return name;
     }
-    string getContactNo()
+    string getContactNo() const
     {
         return contactno;
     }
-    string getMembershipStartDate()
+    string getMembershipStartDate() const
     {
         return membershipstartdate;
     }
-    string getMembershipType()
+    string getMembershipType() const
     {
         return membershiptype;
     }
-    string getMembershipDuration()
+    string getMembershipDuration() const
     {
         return membershipduration;
     }
-    string getActivityStatus()
+    string getActivityStatus() const
 
     {
         return activitystatus;
     }
-    string getMemberId()
+    string getMemberId() const
     {
         return memberid;
     }
-    string getCheckType(int index)
+    string getCheckType(int index) const
     {
         return checktype[index];
     }
-    string getAttendanceDate(int index)
+    string getAttendanceDate(int index) const
     {
         return attendancedate[index];
     }
-    string getAttendanceTime(int index)
+    string getAttendanceTime(int index) const
     {
         return attendancetime[index];
     }
 
-    int getCheckTypeSize() // function for determining size of checktype vector
+    int getCheckTypeSize() const // function for determining size of checktype vector
     {
         return checktype.size() - 1; 
     }
-    int getAttendanceDateSize()
+    int getAttendanceDateSize() const
     {
         return attendancedate.size() - 1; 
     }
-    int getAttendanceTimeSize()
+    int getAttendanceTimeSize() const
     {
         return attendancetime.size() - 1; 
     }
@@ -443,6 +445,14 @@ void newRegistration() // This function registers a new member by taking informa
     activitystatus = "Active";
 
     members.push_back(Member(name, contactno, membershipstartdate, membershiptype, membershipduration, activitystatus, memberid));
+
+    cout << "Registration Successful!" << endl;
+    cout << "Your Member ID is " << memberid;
+}
+
+void reportGeneration()
+{
+    
 }
 
 void memberTerminal() //main member menu function, it takes inputs and navigates user to inner menus within the main member function. allows users to register themselves, or check in or check out according to their member status 
@@ -482,24 +492,46 @@ void memberTerminal() //main member menu function, it takes inputs and navigates
 
             int lastindex = members.size() - 1;
             int index = 0;
+            int updateindex;
             recordfound = false;
             do {
                 if (members[index].getMemberId() == memberid)
                 {
                     recordfound = true;
+                    updateindex = index;
                 }
                 ++index;
             } while ((index <= lastindex) && !recordfound);
 
             if (recordfound)
             {
+                int lastindex = members[updateindex].getCheckTypeSize();
+                string lastchecktype = members[updateindex].getCheckType(lastindex);
                 if (checkstatus == 1)
                 {
-                    memberCheckIn(memberid);
+                    if (lastchecktype != "Check-In")
+                    {
+                        memberCheckIn(memberid);
+                    }
+                    else
+                    {
+                        cout << "Error: You have already checked in before" << endl;
+                        cout << "Redirecting to member terminal" << endl;
+                        memberTerminal();
+                    }
                 }
                 else
                 {
-                    memberCheckOut(memberid);
+                    if (lastchecktype == "Check-In")
+                    {
+                        memberCheckIn(memberid);
+                    }
+                    else
+                    {
+                        cout << "Error: You have already checked out before" << endl;
+                        cout << "Redirecting to member terminal" << endl;
+                        memberTerminal();
+                    }
                 }
             }
             else {
@@ -694,16 +726,17 @@ void managerTerminal() //main manager interface function, it takes inputs and na
     cout << "Select any action you want from the list below: " << endl;
     cout << "   1, Update Member Information" << endl;
     cout << "   2, Search Member Details" << endl;
+    cout << "   3, Generate Report";
 
     do
     {
         cout << "Enter 1 to Update Member Information; Enter 2 to Search for Member Details"; 
         cin >> actioninput;
-        if ((actioninput != 1) && (actioninput != 2))
+        if ((actioninput != 1) && (actioninput != 2) && (actioninput != 3))
         {
-            cout << "Enter 1 or 2 only" << endl;
+            cout << "Enter 1 or 2 or 3 only" << endl;
         }
-    } while ((actioninput != 1) && (actioninput != 2));
+    } while ((actioninput != 1) && (actioninput != 2) && (actioninput != 3));
 
     if (actioninput == 2)
     {
@@ -714,7 +747,7 @@ void managerTerminal() //main manager interface function, it takes inputs and na
 
         searchMember(memberid);
     }
-    else
+    else if  (actioninput == 1)
     {
         string memberid;
 
@@ -738,6 +771,10 @@ void managerTerminal() //main manager interface function, it takes inputs and na
         {
             cout << "Error: Record not found!";
         }
+    }
+    else 
+    {
+        reportGeneration();
     }
 }
 
