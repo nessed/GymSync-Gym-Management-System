@@ -400,29 +400,46 @@ string calculateDuration(string checkintime, string checkouttime)
     return to_string(hours) + " hour(s) and " + to_string(minutes) + " minute(s)";
 }
 
-void memberCheckIn(string memberid) // This function stores the check in data of user in the record including date and time of check in
+void memberCheckIn(string memberid) 
 {
     string time, date;
     time = __TIME__;
     date = __DATE__;
 
     bool recordfound = false;
-    int index = 0;
-    int updateindex;
-    do
+    int updateindex = -1;
+
+    // Search for the member in the vector
+    for (int index = 0; index < members.size(); ++index)
     {
         if (members[index].getMemberId() == memberid)
         {
             recordfound = true;
             updateindex = index;
+            break;
         }
-        ++index;
-    } while (!recordfound);
+    }
 
+    // If the member is not found, display an error
+    if (!recordfound)
+    {
+        cout << "Error: Member ID not found. Check-In not possible." << endl;
+        return;
+    }
+
+    // Check if the last record for the member is "Check-In"
+    int lastIndex = members[updateindex].getCheckTypeSize();
+    if (lastIndex >= 0 && members[updateindex].getCheckType(lastIndex) == "Check-In")
+    {
+        cout << "Error: You are already checked in. Please check out before checking in again." << endl;
+        return;
+    }
+
+    // Perform the check-in
     members[updateindex].setCheckType("Check-In");
     members[updateindex].setAttendanceDate(date);
     members[updateindex].setAttendanceTime(time);
-    cout<<"You have checked in!"<<endl;
+    cout << "You have checked in!" << endl;
 }
 
 void memberCheckOut(string memberid)
@@ -446,6 +463,12 @@ void memberCheckOut(string memberid)
 
     int lastindex = members[updateindex].getCheckTypeSize();
 
+    if (lastindex < 0 || members[updateindex].getCheckType(lastindex) != "Check-In")
+    {
+        cout << "Error: No valid Check-In record found! Check-Out not allowed." << endl;
+        return;
+    }
+
     string checkintime = members[updateindex].getAttendanceTime(lastindex);
     string duration = calculateDuration(checkintime, time);
     cout << "Workout Duration: " << duration << endl;
@@ -453,8 +476,7 @@ void memberCheckOut(string memberid)
     members[updateindex].setCheckType("Check-Out");
     members[updateindex].setAttendanceDate(date);
     members[updateindex].setAttendanceTime(time);
-    cout<<"You have checked out!"<<endl;
-
+    cout << "You have checked out!" << endl;
 }
 
 string generateMemberId() // This function generates a new unique member id each time
@@ -606,7 +628,7 @@ void memberTerminal() // main member menu function, it takes inputs and navigate
                 int lastindex = members[updateindex].getCheckTypeSize();
                 if (lastindex > 0)
                 {
-                    lastchecktype = members[updateindex-1].getCheckType(lastindex);
+                    lastchecktype = members[updateindex].getCheckType(lastindex);
                     if (checkstatus == 1)
                     {
                         if (lastchecktype != "Check-In")
@@ -860,8 +882,23 @@ void managerTerminal() // main manager interface function, it takes inputs and n
 
         cout << "Enter the ID of member you want to search the information from: ";
         cin >> memberid;
-
-        searchMember(memberid);
+        
+        int lastindex = members.size() - 1;
+        bool recordfound = false;
+        for (int index = 0; index <= lastindex; ++index)
+        {
+            if (members[index].getMemberId() == memberid)
+                recordfound = true;
+                break;
+        }
+        if (recordfound)
+        {
+            searchMember(memberid);
+        }
+        else
+        {
+            cout << "Record not found!" << endl;
+        }
     }
     else if (actioninput == 1)
     {
